@@ -7,7 +7,7 @@
       |
       <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
     </div>
-    <router-view />
+    <router-view :key="$route.fullPath" />
   </div>
 </template>
 
