@@ -6,32 +6,48 @@
       v-if="page !== 1"
       rel="prev"
       :to="{ name: 'EventList', query: { page: page - 1 } }"
-      >Prev Page</router-link
-    >
+      >Prev Page
+    </router-link>
     |
     <router-link
+      v-if="hasNextPate"
       rel="next"
       :to="{ name: 'EventList', query: { page: page + 1 } }"
-      >Next Page</router-link
-    >
+      >Next Page
+    </router-link>
   </div>
 </template>
 
 <script>
 import EventCard from '@/components/EventCard.vue'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+
 export default {
   name: 'EventList',
   components: {
     EventCard
   },
   created() {
-    this.$store.dispatch('fetchEvents', { perPage: 3, page: this.page })
+    this.perPage = 3
+    this.fetchEvents({ perPage: this.perPage, page: this.page })
+    // this.$store.dispatch('event/fetchEvents', {
+    //   perPage: this.perPage,
+    //   page: this.page
+    // })
+  },
+  methods: {
+    ...mapActions({ fetchEvents: 'event/fetchEvents' })
   },
   computed: {
-    ...mapState(['events']),
+    ...mapState({
+      events: state => state.event.events,
+      eventsTotal: state => state.event.eventsTotal
+    }),
     page() {
       return parseInt(this.$route.query.page) || 1
+    },
+    hasNextPate() {
+      return this.eventsTotal > this.perPage * this.page
     }
   }
 }

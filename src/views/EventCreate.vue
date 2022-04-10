@@ -90,13 +90,18 @@ export default {
   methods: {
     onSubmit() {
       this.event.id = Math.random() * 10000000
-      this.$store.dispatch('createEvent', this.event).then(() => {
-        this.$router.push({
-          name: 'EventDetails',
-          params: { id: this.event.id }
+      this.$store
+        .dispatch('event/createEvent', this.event)
+        .then(() => {
+          this.$router.push({
+            name: 'EventDetails',
+            params: { id: this.event.id }
+          })
+          this.createFreshEvent()
         })
-        this.createFreshEvent()
-      })
+        .catch(error => {
+          console.error(error.message)
+        })
     },
     createFreshEvent() {
       this.event = {

@@ -8,9 +8,17 @@
       <router-link :to="{ name: 'EventCreate' }">Create Event</router-link>
     </div>
     <router-view :key="$route.fullPath" />
+    <NotificationContainer />
   </div>
 </template>
+<script>
+import NotificationContainer from '@/components/NotificationContainer'
 
+export default {
+  name: 'App',
+  components: { NotificationContainer }
+}
+</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
