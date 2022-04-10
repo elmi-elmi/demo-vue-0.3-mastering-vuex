@@ -1,11 +1,13 @@
 import EventService from '@/services/EventService'
+// import NProgress from 'nprogress'
 
 export const namespaced = true
 
 export const state = {
   events: [],
   event: {},
-  eventsTotal: 0
+  eventsTotal: 0,
+  perPage: 3
 }
 
 export const mutations = {
@@ -14,7 +16,6 @@ export const mutations = {
   },
   SET_EVENTS(state, events) {
     state.events = events
-    console.log(state.events)
   },
   SET_EVENTS_TOTAL(state, total) {
     state.eventsTotal = total
@@ -25,8 +26,8 @@ export const mutations = {
 }
 
 export const actions = {
-  fetchEvents({ commit, dispatch }, { perPage, page }) {
-    EventService.getEvents(perPage, page)
+  fetchEvents({ commit, dispatch, state }, { page }) {
+    return EventService.getEvents(state.perPage, page)
       .then(response => {
         commit('SET_EVENTS', response.data)
         commit('SET_EVENTS_TOTAL', response.headers['x-total-count'])
@@ -44,10 +45,12 @@ export const actions = {
     const event = getters.getEventById(id)
     if (event.length) {
       commit('SET_EVENT', event[0])
+      return event
     } else {
-      EventService.getEvent(id)
+      return EventService.getEvent(id)
         .then(response => {
           commit('SET_EVENT', response.data)
+          return response.data
         })
         .catch(error => {
           const notification = {

@@ -10,8 +10,6 @@ export const mutations = {
     nextId++
   },
   DELETE(state, notificaitonToRemove) {
-    console.log('remmmmmmmmmmmm')
-    console.log(state)
     state.notifications = state.notifications.filter(
       notif => notif.id !== notificaitonToRemove.id
     )

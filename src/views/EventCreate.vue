@@ -37,13 +37,13 @@
       <div>
         <label>Time</label> <br />
         <select
-          v-model="event.time"
-          name="time"
           id="time"
+          v-model="event.time"
           class="field"
+          name="time"
           value="time"
         >
-          <option value="" disabled>Time</option>
+          <option disabled value="">Time</option>
           <option v-for="t in times" :key="t" :value="t">{{ t }}</option>
         </select>
       </div>
@@ -56,6 +56,8 @@
 <script>
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
+import NProgress from 'nprogress'
+
 export default {
   name: 'EventCreate',
   components: { Datepicker },
@@ -89,6 +91,7 @@ export default {
   },
   methods: {
     onSubmit() {
+      NProgress.start()
       this.event.id = Math.random() * 10000000
       this.$store
         .dispatch('event/createEvent', this.event)
@@ -100,6 +103,7 @@ export default {
           this.createFreshEvent()
         })
         .catch(error => {
+          NProgress.done()
           console.error(error.message)
         })
     },
@@ -124,6 +128,7 @@ export default {
   border-radius: 0;
   height: 33px;
 }
+
 .dp__main {
   width: 107%;
 }

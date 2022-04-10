@@ -7,15 +7,27 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+// import { mapState } from 'vuex'
+// import { mapState, mapActions } from 'vuex'
+// import store from '@/store/index'
+// import NProgress from 'nprogress'
 
 export default {
-  props: ['id'],
-  created() {
-    // this.$store.dispatch('event/fetchEvent', this.id)
-    this.fetchEvent(this.id)
-  },
-  computed: mapState({ event: state => state.event.event }),
-  methods: mapActions({ fetchEvent: 'event/fetchEvent' })
+  props: ['id', 'event']
+  // beforeRouteEnter(to, from, next) {
+  //   NProgress.start()
+  //   store
+  //     .dispatch('event/fetchEvent', to.params.id)
+  //     .then(() => {
+  //       NProgress.done()
+  //       next()
+  //     })
+  //     .catch(error => {
+  //       NProgress.done()
+  //       console.error(error.message)
+  //     })
+  // },
+  // computed: mapState({ event: state => state.event.event })
+  // methods: mapActions({ fetchEvent: 'event/fetchEvent' })
 }
 </script>
