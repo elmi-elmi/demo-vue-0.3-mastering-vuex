@@ -1,54 +1,51 @@
 <template>
   <div class="form-container">
     <form @submit.prevent="onSubmit">
-      <label>Select a category: </label>
-      <select v-model="event.category">
-        <option
-          v-for="option in categories"
-          :key="option"
-          :selected="option === event.category"
-          :value="option"
-          >{{ option }}
-        </option>
-      </select>
+      <BaseSelect
+        v-model:modelValue="event.categories"
+        :options="categories"
+        label="Select a category: "
+      />
 
       <h3>Name & describe your event</h3>
 
-      <label>Title</label>
-      <input v-model="event.title" placeholder="Title" type="text" />
+      <BaseInput
+        v-model:modelValue="event.title"
+        class="field"
+        label="Title"
+        placeholder="Title"
+        type="text"
+      />
 
-      <label>Description</label>
-      <input
-        v-model="event.description"
+      <BaseInput
+        v-model:modelValue="event.description"
+        class="field"
+        label="Description"
         placeholder="Description"
         type="text"
       />
 
       <h3>Where is your event?</h3>
 
-      <label>Location</label>
-      <input v-model="event.location" placeholder="Location" type="text" />
-
+      <BaseInput
+        v-model:modelValue="event.location"
+        class="field"
+        label="Location"
+        placeholder="Location"
+        type="text"
+      />
       <h3>When is your event?</h3>
 
       <label>Date</label>
       <Datepicker v-model="event.date" />
 
-      <div>
-        <label>Time</label> <br />
-        <select
-          id="time"
-          v-model="event.time"
-          class="field"
-          name="time"
-          value="time"
-        >
-          <option disabled value="">Time</option>
-          <option v-for="t in times" :key="t" :value="t">{{ t }}</option>
-        </select>
-      </div>
+      <BaseSelect
+        v-model:modelValue="event.time"
+        :options="times"
+        label="Time: "
+      />
 
-      <button type="submit">Submit</button>
+      <BaseButton className="-fill-gradient" type="submit">Submit</BaseButton>
     </form>
   </div>
 </template>
@@ -57,10 +54,28 @@
 import Datepicker from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
 import NProgress from 'nprogress'
+import BaseButton from '@/views/BaseButton'
+import useVuelidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
 
 export default {
   name: 'EventCreate',
-  components: { Datepicker },
+  setup() {
+    return { v$: useVuelidate() }
+  },
+  validation() {
+    return {
+      event: {
+        category: { required },
+        title: { required },
+        description: { required },
+        location: { required },
+        date: { required },
+        time: { required }
+      }
+    }
+  },
+  components: { BaseButton, Datepicker },
   data() {
     const times = []
     for (let i = 0; i < 24; i++) {
@@ -134,7 +149,7 @@ export default {
 }
 
 .field {
-  width: 107%;
-  height: 34px;
+  /*width: 107%;*/
+  /*height: 34px;*/
 }
 </style>

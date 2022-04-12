@@ -25,10 +25,20 @@ import store from '@/store/index'
 
 function getPageEvents(to, next) {
   const currentPage = parseInt(to.query.page) || 1
-  store.dispatch('event/fetchEvents', { page: currentPage }).then(() => {
-    to.params.page = currentPage
-    next()
-  })
+  store
+    .dispatch('event/fetchEvents', { page: currentPage })
+    .then(() => {
+      to.params.page = currentPage
+      next()
+    })
+    .catch(error => {
+      console.log('^^^^^^^^^^^^6')
+      if (error.response?.status === 404) {
+        next({ name: '404', params: { resource: 'page' } })
+      }
+      console.log('((((((((((9')
+      next({ name: 'NetworkIssue' })
+    })
 }
 
 export default {
