@@ -2,10 +2,14 @@
   <div class="form-container">
     <form @submit.prevent="onSubmit">
       <BaseSelect
-        v-model:modelValue="event.categories"
+        v-model:modelValue="event.category"
         :options="categories"
         label="Select a category: "
+        @blur="v$.event.category.$validate()"
       />
+      <p v-if="v$.event.category.$error" class="error">
+        Please select a category
+      </p>
 
       <h3>Name & describe your event</h3>
 
@@ -15,7 +19,12 @@
         label="Title"
         placeholder="Title"
         type="text"
+        @blur="v$.event.title.$validate()"
       />
+
+      <p v-if="v$.event.title.$error" class="error">
+        Please enter a valid title
+      </p>
 
       <BaseInput
         v-model:modelValue="event.description"
@@ -23,7 +32,19 @@
         label="Description"
         placeholder="Description"
         type="text"
+        @blur="v$.event.description.$validate()"
       />
+      <p v-if="v$.event.description.$error" class="error">
+        Please enter a valid description
+      </p>
+
+      <h3>When is your event?</h3>
+
+      <label>Date</label>
+      <Datepicker v-model="event.date" @closed="v$.event.date.$validate()" />
+      <p v-if="v$.event.date.$error" class="error">
+        Please select a date
+      </p>
 
       <h3>Where is your event?</h3>
 
@@ -33,19 +54,26 @@
         label="Location"
         placeholder="Location"
         type="text"
+        @blur="v$.event.location.$validate()"
       />
-      <h3>When is your event?</h3>
-
-      <label>Date</label>
-      <Datepicker v-model="event.date" />
+      <p v-if="v$.event.location.$error" class="error">
+        Please enter a valid location
+      </p>
 
       <BaseSelect
         v-model:modelValue="event.time"
         :options="times"
         label="Time: "
+        @blur="v$.event.time.$validate()"
       />
+      <p v-if="v$.event.time.$error" class="error">
+        Please select a time
+      </p>
 
       <BaseButton className="-fill-gradient" type="submit">Submit</BaseButton>
+      <p v-if="v$.$error" class="error">
+        Please check all fields
+      </p>
     </form>
   </div>
 </template>
@@ -60,10 +88,7 @@ import { required } from '@vuelidate/validators'
 
 export default {
   name: 'EventCreate',
-  setup() {
-    return { v$: useVuelidate() }
-  },
-  validation() {
+  validations() {
     return {
       event: {
         category: { required },
@@ -82,6 +107,7 @@ export default {
       times.push(i + ':00')
     }
     return {
+      v$: useVuelidate(),
       categories: [
         'sustainability',
         'nature',
@@ -106,21 +132,31 @@ export default {
   },
   methods: {
     onSubmit() {
-      NProgress.start()
-      this.event.id = Math.random() * 10000000
-      this.$store
-        .dispatch('event/createEvent', this.event)
-        .then(() => {
-          this.$router.push({
-            name: 'EventDetails',
-            params: { id: this.event.id }
+      this.v$.$validate()
+      console.log(!this.v$.$error)
+      if (!this.v$.$error) {
+        console.log('----')
+        NProgress.start()
+        this.event.id = Math.floor(Math.random() * 10000000)
+        this.$store
+          .dispatch('event/createEvent', this.event)
+          .then(() => {
+            this.$router.push({
+              name: 'EventDetails',
+              params: { id: this.event.id }
+            })
           })
-          this.createFreshEvent()
-        })
-        .catch(error => {
-          NProgress.done()
-          console.error(error.message)
-        })
+          .then(() => {
+            this.createFreshEvent()
+          })
+          .catch(error => {
+            NProgress.done()
+            console.error(error.message)
+          })
+      }
+      // else {
+      //   console.log(this.v$.$error)
+      // }
     },
     createFreshEvent() {
       this.event = {
@@ -151,5 +187,9 @@ export default {
 .field {
   /*width: 107%;*/
   /*height: 34px;*/
+}
+
+.error {
+  color: red;
 }
 </style>

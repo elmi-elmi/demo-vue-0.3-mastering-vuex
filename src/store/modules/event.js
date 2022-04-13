@@ -53,7 +53,7 @@ export const actions = {
     }
   },
   createEvent({ commit, dispatch }, event) {
-    EventService.postEvent(event)
+    return EventService.postEvent(event)
       .then(() => {
         commit('ADD_EVENT', event)
         const notification = {
